@@ -1,0 +1,4 @@
+@namespace("com.bpi.speedy.model.schema")
+protocol TestMessageProtocol {
+  import schema "MessageContent.avsc";
+}

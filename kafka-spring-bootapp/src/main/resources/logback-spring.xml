@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!-- DEV/SIT/TEST/DEFAULT Environments -->
+  <springProfile name="dev,sit,test,default">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+      </encoder>
+    </appender>
+    <appender name="ASYNC-STDOUT" class="ch.qos.logback.classic.AsyncAppender">
+      <appender-ref ref="STDOUT"/>
+    </appender>
+    <root level="info">
+      <appender-ref ref="ASYNC-STDOUT"/>
+    </root>
+  </springProfile>
+
+  <!-- All Environments -->
+  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_PATH:-logs}/${POD_NAME:-kafka-springboot-app}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH}/${POD_NAME:-kafka-springboot-app}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>50</maxHistory>
+      <totalSizeCap>3GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <mdc/> <!-- MDC variables on the Thread will be written as JSON fields -->
+        <context/> <!--Outputs entries from logback's context -->
+        <version/> <!-- Logstash json format version, the @version field in the output -->
+        <logLevel/>
+        <loggerName/>
+        <timestamp>
+          <fieldName>timestamp</fieldName>
+          <pattern>yyyy-MM-dd HH:mm:ss.SSSZZ</pattern>
+          <timeZone>GMT+8</timeZone>
+        </timestamp>
+        <pattern>
+          <pattern>
+            {
+            "serviceName": "kafka-springboot-app"
+            }
+          </pattern>
+        </pattern>
+        <threadName/>
+        <message/>
+        <logstashMarkers/>
+        <stackTrace/>
+      </providers>
+    </encoder>
+  </appender>
+  <appender name="ASYNC-ROLLING" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="ROLLING"/>
+  </appender>
+  <root level="info">
+    <appender-ref ref="ASYNC-ROLLING"/>
+  </root>
+
+</configuration>

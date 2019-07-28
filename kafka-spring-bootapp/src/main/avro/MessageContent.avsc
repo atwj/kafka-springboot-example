@@ -1,0 +1,10 @@
+{
+    "namespace": "com.bpi.speedy.model.schema",
+    "type": "record",
+    "name": "MessageContent",
+    "fields": [
+        {"name": "timestamp", "type": "string"},
+        {"name": "title", "type": "string"},
+        {"name": "content", "type": "string"}
+    ]
+}
